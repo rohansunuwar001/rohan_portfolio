@@ -102,7 +102,7 @@ export default function Hero({ title, heroTitle, heroSubtitle, heroDesc, scrollP
   return (
     <section 
       ref={containerRef}
-      className="relative flex h-screen w-full flex-col justify-center px-6 md:px-16 lg:px-32 overflow-hidden bg-[#050507]/30 backdrop-blur-[2px]"
+      className="relative z-10 flex h-screen w-full flex-col justify-center px-6 md:px-16 lg:px-32 overflow-hidden bg-[#050507]/30 backdrop-blur-[2px]"
     >
       <div className="relative z-10 max-w-5xl space-y-6">
         {/* Status Line */}
@@ -135,7 +135,7 @@ export default function Hero({ title, heroTitle, heroSubtitle, heroDesc, scrollP
           
           <div className="md:col-span-8 overflow-hidden">
             <p className="hero-desc-reveal hero-subtitle-wind text-xs md:text-sm font-mono leading-relaxed">
-              {title} // {heroDesc}
+              {title} {"//"} {heroDesc}
             </p>
           </div>
         </div>

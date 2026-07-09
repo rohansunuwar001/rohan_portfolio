@@ -11,6 +11,8 @@ const MainLayout = dynamic(() => import('../components/layout/MainLayout'), { ss
 const Hero = dynamic(() => import('../components/sections/Hero'), { ssr: false });
 const About = dynamic(() => import('../components/sections/About'), { ssr: false });
 const Projects = dynamic(() => import('../components/sections/Projects'), { ssr: false });
+const Contact = dynamic(() => import('../components/sections/Contact'),{ssr: false}
+);
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -140,9 +142,6 @@ export default function Home() {
       <MainLayout
         profileName={profile.name}
         isLoggedIn={isLoggedIn}
-        email={profile.email}
-        github={profile.github}
-        linkedin={profile.linkedin}
       >
         <Hero 
           title={profile.title} 
@@ -161,6 +160,8 @@ export default function Home() {
           aboutImageUrl={profile.aboutImageUrl}
         />
         <Projects projects={projects} />
+        <Contact email={profile.email} github={profile.github} linkedin={profile.linkedin} />
+
       </MainLayout>
     </div>
   );

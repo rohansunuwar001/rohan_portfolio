@@ -48,8 +48,9 @@ export default function RegisterPage() {
       setTimeout(() => {
         router.push('/login');
       }, 2000);
-    } catch (err: any) {
-      setError(err.message || 'Server connection failed');
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Server connection failed';
+      setError(errorMsg);
     } finally {
       setIsLoading(false);
     }
