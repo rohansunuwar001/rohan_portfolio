@@ -118,7 +118,14 @@ export default function CMSPage() {
   };
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('portfolio_token');
+    let savedToken = localStorage.getItem('portfolio_token');
+    if (!savedToken) {
+      const match = document.cookie.match(/(^|;)\s*portfolio_token\s*=\s*([^;]+)/);
+      if (match) {
+        savedToken = match[2];
+        localStorage.setItem('portfolio_token', savedToken);
+      }
+    }
     if (savedToken) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setToken(savedToken);
@@ -133,6 +140,7 @@ export default function CMSPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('portfolio_token');
+    document.cookie = 'portfolio_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure';
     setToken(null);
     router.push('/');
   };

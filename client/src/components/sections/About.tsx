@@ -5,6 +5,9 @@ import { FileText } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import dynamic from 'next/dynamic';
+
+const TextScramble = dynamic(() => import('../effects/TextScramble'), { ssr: false });
 
 interface AboutProps {
   bio: string;
@@ -133,8 +136,8 @@ export default function About({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         {/* Left Column: Biography & Details */}
         <div className="lg:col-span-7 space-y-8">
-          <div className="about-left-animate text-[10px] md:text-xs text-sky-400 font-mono uppercase tracking-widest flex items-center gap-2">
-            <span>01 — MEET THE SYSTEM</span>
+          <div className="about-left-animate text-[10px] md:text-xs text-sky-400 font-mono uppercase tracking-widest flex items-center gap-2 cursor-pointer">
+            <span><TextScramble text="01 — MEET THE SYSTEM" triggerOnScroll={false} /></span>
           </div>
 
           <div className="about-left-animate">
@@ -150,12 +153,20 @@ export default function About({
           {/* Details list */}
           <div className="about-left-animate grid grid-cols-2 gap-8 pt-6 max-w-md">
             <div>
-              <h4 className="text-zinc-600 text-[10px] uppercase tracking-wider font-mono">Core Focus</h4>
-              <p className="text-zinc-300 text-xs mt-1 font-mono">{aboutFocus || "Frontend Architectures & Interactive WebGL"}</p>
+              <h4 className="text-zinc-600 text-[10px] uppercase tracking-wider font-mono cursor-pointer">
+                <TextScramble text="Core Focus" triggerOnScroll={false} />
+              </h4>
+              <p className="text-zinc-300 text-xs mt-1 font-mono hover:text-sky-400 transition-colors cursor-pointer">
+                <TextScramble text={aboutFocus || "Frontend Architectures & Interactive WebGL"} triggerOnScroll={false} />
+              </p>
             </div>
             <div>
-              <h4 className="text-zinc-600 text-[10px] uppercase tracking-wider font-mono">Location</h4>
-              <p className="text-zinc-300 text-xs mt-1 font-mono">{aboutLocation || "Kathmandu, Nepal"}</p>
+              <h4 className="text-zinc-600 text-[10px] uppercase tracking-wider font-mono cursor-pointer">
+                <TextScramble text="Location" triggerOnScroll={false} />
+              </h4>
+              <p className="text-zinc-300 text-xs mt-1 font-mono hover:text-rose-400 transition-colors cursor-pointer">
+                <TextScramble text={aboutLocation || "Kathmandu, Nepal"} triggerOnScroll={false} />
+              </p>
             </div>
           </div>
 
@@ -167,9 +178,9 @@ export default function About({
                 download
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 border border-zinc-800 bg-zinc-950/40 hover:border-emerald-500 hover:text-zinc-950 hover:bg-emerald-400 px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300"
+                className="inline-flex items-center gap-2 border border-zinc-800 bg-zinc-950/40 hover:border-emerald-500 hover:text-zinc-950 hover:bg-emerald-400 px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-lg"
               >
-                <FileText size={14} /> Download CV / System Resume
+                <FileText size={14} /> <TextScramble text="Download CV / System Resume" triggerOnScroll={false} />
               </a>
             )}
           </div>
@@ -195,15 +206,17 @@ export default function About({
 
           {/* Tech Stack specs card */}
           <div className="about-right-animate border border-zinc-900 bg-zinc-950/30 backdrop-blur-sm p-8 rounded-xl font-mono space-y-4">
-            <span className="text-zinc-600 text-[10px] block border-b border-zinc-900 pb-2 uppercase tracking-wider">SYSTEM_STACK_CONFIG</span>
+            <span className="text-zinc-600 text-[10px] block border-b border-zinc-900 pb-2 uppercase tracking-wider cursor-pointer">
+              <TextScramble text="SYSTEM_STACK_CONFIG" triggerOnScroll={false} />
+            </span>
             <ul className="space-y-3 text-[11px] text-zinc-400">
               {techItems.map((item, idx) => {
                 const stepNum = String(idx + 1).padStart(2, '0');
                 return (
-                  <li key={idx} className="flex items-center justify-between">
+                  <li key={idx} className="flex items-center justify-between hover:text-white transition-colors cursor-pointer group">
                     <span className="text-zinc-600">{stepNum}.</span> 
-                    <span>{item.name}</span> 
-                    <span className="text-sky-400 font-bold">{item.level}</span>
+                    <span className="flex-1 ml-2"><TextScramble text={item.name} triggerOnScroll={false} /></span> 
+                    <span className="text-sky-400 font-bold group-hover:text-rose-400 transition-colors"><TextScramble text={item.level} triggerOnScroll={false} /></span>
                   </li>
                 );
               })}

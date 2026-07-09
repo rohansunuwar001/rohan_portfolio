@@ -15,7 +15,14 @@ export default function RegisterPage() {
 
   useEffect(() => {
     // If already logged in, redirect to cms page immediately
-    const token = localStorage.getItem('portfolio_token');
+    let token = localStorage.getItem('portfolio_token');
+    if (!token) {
+      const match = document.cookie.match(/(^|;)\s*portfolio_token\s*=\s*([^;]+)/);
+      if (match) {
+        token = match[2];
+        localStorage.setItem('portfolio_token', token);
+      }
+    }
     if (token) {
       router.push('/cms');
     }

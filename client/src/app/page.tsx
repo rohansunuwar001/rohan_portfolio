@@ -110,8 +110,16 @@ export default function Home() {
   const { projects: queryProjects } = useGetProjects();
 
   useEffect(() => {
+    let token = localStorage.getItem('portfolio_token');
+    if (!token) {
+      const match = document.cookie.match(/(^|;)\s*portfolio_token\s*=\s*([^;]+)/);
+      if (match) {
+        token = match[2];
+        localStorage.setItem('portfolio_token', token);
+      }
+    }
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoggedIn(!!localStorage.getItem('portfolio_token'));
+    setIsLoggedIn(!!token);
   }, []);
 
   const profile = queryProfile.name ? queryProfile : DEFAULT_PROFILE;

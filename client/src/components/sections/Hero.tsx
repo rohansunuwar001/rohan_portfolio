@@ -1,10 +1,13 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { ArrowUpRight } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+const TextScramble = dynamic(() => import('../effects/TextScramble'), { ssr: false });
 
 interface HeroProps {
   title: string;
@@ -117,9 +120,9 @@ export default function Hero({ title, heroTitle, heroSubtitle, heroDesc, scrollP
           className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter leading-[0.9] pb-4 select-none uppercase font-sans origin-left"
         >
           {heroLines.map((line, i) => (
-            <div key={i} className="overflow-hidden">
+            <div key={i} className="overflow-hidden cursor-pointer">
               <span className="hero-title-line inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-400 to-zinc-600">
-                {line}
+                <TextScramble text={line} triggerOnScroll={false} />
               </span>
             </div>
           ))}
@@ -128,14 +131,17 @@ export default function Hero({ title, heroTitle, heroSubtitle, heroDesc, scrollP
         {/* Subtitle & Description */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 pt-4 max-w-4xl">
           <div className="md:col-span-4 overflow-hidden">
-            <span className="hero-sub-reveal inline-block hero-subtitle-wind font-bold text-sm md:text-base uppercase tracking-wider">
-              {heroSubtitle}
+            <span className="hero-sub-reveal inline-block hero-subtitle-wind font-bold text-sm md:text-base uppercase tracking-wider text-sky-400 cursor-pointer">
+              <TextScramble text={heroSubtitle} triggerOnScroll={false} />
             </span>
           </div>
           
           <div className="md:col-span-8 overflow-hidden">
-            <p className="hero-desc-reveal hero-subtitle-wind text-xs md:text-sm font-mono leading-relaxed">
-              {title} {"//"} {heroDesc}
+            <p className="hero-desc-reveal hero-subtitle-wind text-xs md:text-sm font-mono leading-relaxed text-zinc-400">
+              <span className="text-rose-400 hover:text-rose-300 transition-colors cursor-pointer">
+                <TextScramble text={title} triggerOnScroll={false} />
+              </span>{" "}
+              {"//"} {heroDesc}
             </p>
           </div>
         </div>
@@ -146,18 +152,18 @@ export default function Hero({ title, heroTitle, heroSubtitle, heroDesc, scrollP
             href="#about"
             className="inline-flex items-center gap-3 border border-zinc-800 bg-zinc-950/40 backdrop-blur-sm hover:border-sky-500 hover:text-zinc-950 hover:bg-sky-400 px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-xl"
           >
-            ENTER SYSTEM OVERVIEW <ArrowUpRight size={14} />
+            <TextScramble text="ENTER SYSTEM OVERVIEW" triggerOnScroll={false} /> <ArrowUpRight size={14} />
           </a>
         </div>
       </div>
 
       {/* Floating transparent code block */}
-      <div className="code-float absolute right-8 md:right-16 lg:right-28 top-1/2 -translate-y-1/2 hidden md:block select-none pointer-events-none">
+      <div className="code-float absolute right-8 md:right-16 lg:right-28 top-1/2 -translate-y-1/2 hidden md:block select-none">
         <div className="relative font-mono text-base md:text-lg lg:text-xl leading-loose">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-sky-500/[0.03] to-transparent pointer-events-none" />
           
           <div className="code-line overflow-hidden py-1">
-            <span className="text-pink-500">while</span> <span className="text-zinc-400">(</span><span className="text-emerald-400 font-semibold">alive</span><span className="text-zinc-400">)</span>
+            <span className="text-pink-500 cursor-pointer"><TextScramble text="while" triggerOnScroll={false} /></span> <span className="text-zinc-400">(</span><span className="text-emerald-400 font-semibold cursor-pointer"><TextScramble text="alive" triggerOnScroll={false} /></span><span className="text-zinc-400">)</span>
           </div>
           
           <div className="code-line overflow-hidden py-1">
@@ -165,19 +171,19 @@ export default function Hero({ title, heroTitle, heroSubtitle, heroDesc, scrollP
           </div>
           
           <div className="code-line overflow-hidden py-1 pl-8">
-            <span className="text-sky-400">eat</span><span className="text-zinc-400">();</span>
+            <span className="text-sky-400 cursor-pointer"><TextScramble text="eat" triggerOnScroll={false} /></span><span className="text-zinc-400">();</span>
           </div>
           
           <div className="code-line overflow-hidden py-1 pl-8">
-            <span className="text-sky-400">sleep</span><span className="text-zinc-400">();</span>
+            <span className="text-sky-400 cursor-pointer"><TextScramble text="sleep" triggerOnScroll={false} /></span><span className="text-zinc-400">();</span>
           </div>
           
           <div className="code-line overflow-hidden py-1 pl-8">
-            <span className="text-purple-400">code</span><span className="text-zinc-400">();</span>
+            <span className="text-purple-400 cursor-pointer"><TextScramble text="code" triggerOnScroll={false} /></span><span className="text-zinc-400">();</span>
           </div>
           
           <div className="code-line overflow-hidden py-1 pl-8">
-            <span className="text-purple-400">repeat</span><span className="text-zinc-400">();</span>
+            <span className="text-purple-400 cursor-pointer"><TextScramble text="repeat" triggerOnScroll={false} /></span><span className="text-zinc-400">();</span>
           </div>
           
           <div className="code-line overflow-hidden py-1">

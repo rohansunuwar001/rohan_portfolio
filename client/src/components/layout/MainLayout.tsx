@@ -3,6 +3,7 @@
 import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import CookieConsent from './CookieConsent';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ export default function MainLayout({
       <Navbar profileName={profileName} isLoggedIn={isLoggedIn} />
       {children}
       <Footer profileName={profileName} />
+      <CookieConsent />
     </>
   );
 }

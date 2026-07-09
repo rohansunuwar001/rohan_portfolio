@@ -17,15 +17,21 @@ export default function Navbar({ profileName, isLoggedIn }: NavbarProps) {
         <TextScramble text={profileName} triggerOnScroll={false} />
       </a>
       <nav className="flex items-center gap-6 text-xs uppercase tracking-wider">
-        <a href="#about" className="hover:text-sky-400 transition-colors">.about</a>
-        <a href="#projects" className="hover:text-rose-500 transition-colors">.work</a>
-        <a href="#contact" className="hover:text-emerald-400 transition-colors">.contact</a>
+        <a href="#about" className="hover:text-sky-400 transition-colors">
+          <TextScramble text=".about" triggerOnScroll={false} />
+        </a>
+        <a href="#projects" className="hover:text-rose-500 transition-colors">
+          <TextScramble text=".work" triggerOnScroll={false} />
+        </a>
+        <a href="#contact" className="hover:text-emerald-400 transition-colors">
+          <TextScramble text=".contact" triggerOnScroll={false} />
+        </a>
         {isLoggedIn && (
           <a
             href="/cms"
             className="border border-zinc-800 bg-zinc-950/50 px-3 py-1.5 rounded hover:border-sky-500 hover:text-sky-400 transition-all"
           >
-            .cms
+            <TextScramble text=".cms" triggerOnScroll={false} />
           </a>
         )}
       </nav>

@@ -5,6 +5,9 @@ import { ArrowUpRight, LayoutGrid } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import dynamic from 'next/dynamic';
+
+const TextScramble = dynamic(() => import('../effects/TextScramble'), { ssr: false });
 
 interface Project {
   id: number;
@@ -100,13 +103,13 @@ export default function Projects({ projects }: ProjectsProps) {
     >
       {/* Section Header */}
       <div className="space-y-4 mb-20">
-        <span className="project-animate-up text-xs text-rose-500 font-mono uppercase tracking-widest flex items-center gap-2">
+        <span className="project-animate-up text-xs text-rose-500 font-mono uppercase tracking-widest flex items-center gap-2 cursor-pointer">
           <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
-          02 / EXPERIMENTS
+          <TextScramble text="02 / EXPERIMENTS" triggerOnScroll={false} />
         </span>
         <div className="project-animate-up">
-          <h2 ref={titleRef} className="text-4xl md:text-6xl font-extrabold tracking-tight uppercase font-sans hero-subtitle-wind origin-left">
-            Project Repositories
+          <h2 ref={titleRef} className="text-4xl md:text-6xl font-extrabold tracking-tight uppercase font-sans hero-subtitle-wind origin-left cursor-pointer">
+            <TextScramble text="Project Repositories" triggerOnScroll={false} />
           </h2>
         </div>
       </div>
@@ -127,8 +130,8 @@ export default function Projects({ projects }: ProjectsProps) {
               <div>
                 {/* Card Top Info */}
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider">
-                    INDEX {indexNum}
+                  <span className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider cursor-pointer">
+                    <TextScramble text={`INDEX ${indexNum}`} triggerOnScroll={false} />
                   </span>
                   <LayoutGrid size={16} className="text-zinc-600" />
                 </div>
@@ -149,8 +152,8 @@ export default function Projects({ projects }: ProjectsProps) {
                 )}
 
                 {/* Card Title & Desc */}
-                <h3 className="text-lg font-bold tracking-tight text-white mb-3">
-                  {proj.title}
+                <h3 className="text-lg font-bold tracking-tight text-white mb-3 hover:text-rose-400 transition-colors cursor-pointer">
+                  <TextScramble text={proj.title} triggerOnScroll={false} />
                 </h3>
                 <p className="text-zinc-400 text-xs leading-relaxed mb-6 font-mono">
                   {proj.description}
@@ -163,9 +166,9 @@ export default function Projects({ projects }: ProjectsProps) {
                   {proj.tags.split(',').map((tag) => (
                     <span 
                       key={tag} 
-                      className="text-[9px] font-mono bg-zinc-900/60 border border-zinc-900 text-zinc-500 px-2 py-0.5 rounded"
+                      className="text-[9px] font-mono bg-zinc-900/60 border border-zinc-900 text-zinc-500 px-2 py-0.5 rounded hover:text-zinc-300 transition-colors cursor-pointer"
                     >
-                      {tag.trim()}
+                      <TextScramble text={tag.trim()} triggerOnScroll={false} />
                     </span>
                   ))}
                 </div>
@@ -179,7 +182,7 @@ export default function Projects({ projects }: ProjectsProps) {
                       rel="noreferrer"
                       className="text-rose-500 hover:text-white transition-colors flex items-center gap-1.5"
                     >
-                      DEMO <ArrowUpRight size={13} />
+                      <TextScramble text="DEMO" triggerOnScroll={false} /> <ArrowUpRight size={13} />
                     </a>
                   )}
                   {proj.githubLink && proj.githubLink !== '#' && (
@@ -189,7 +192,7 @@ export default function Projects({ projects }: ProjectsProps) {
                       rel="noreferrer"
                       className="text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5"
                     >
-                      SOURCE <ArrowUpRight size={13} />
+                      <TextScramble text="SOURCE" triggerOnScroll={false} /> <ArrowUpRight size={13} />
                     </a>
                   )}
                 </div>
