@@ -78,6 +78,7 @@ export default function TextScramble({ text, className = '', triggerOnScroll = t
       className={`font-mono transition-colors duration-300 ${className}`}
     >
       {displayText}
+      
     </span>
   );
 }
