@@ -1,7 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { Mail } from 'lucide-react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 interface FooterProps {
   profileName: string;
@@ -26,21 +29,76 @@ const LinkedinIcon = () => (
 );
 
 export default function Footer({ profileName, email, github, linkedin }: FooterProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  useGSAP(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    if (!containerRef.current) return;
+
+    // Get all animate-up elements scoped inside this container
+    const items = gsap.utils.toArray<HTMLElement>(
+      containerRef.current.querySelectorAll('.contact-animate-up')
+    );
+
+    // Animate from hidden → visible on scroll into view
+    // Use fromTo so GSAP explicitly controls the start state (no gsap.set needed)
+    // toggleActions: play forward on enter, reverse back on leave-back
+    gsap.fromTo(
+      items,
+      { opacity: 0, y: 40 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        stagger: 0.12,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top 88%',
+          toggleActions: 'play none none reverse',
+        },
+      }
+    );
+    // Scroll scrub: scale down & fade out heading as page scrolls past it
+    if (titleRef.current) {
+      gsap.to(titleRef.current, {
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1,
+        },
+        scale: 0.85,
+        yPercent: 15,
+        opacity: 0.3,
+        ease: 'none',
+      });
+    }
+  }, { scope: containerRef });
+
   return (
-    <section id="contact" className="relative min-h-[60vh] flex flex-col justify-center px-6 md:px-16 lg:px-32 py-24 bg-zinc-950/20 border-t border-zinc-900/30 font-mono">
+    <section 
+      ref={containerRef}
+      id="contact" 
+      className="relative min-h-[60vh] flex flex-col justify-center px-6 md:px-16 lg:px-32 py-24 bg-[#050507]/80 backdrop-blur-[8px] border-t border-zinc-900/30 font-mono"
+    >
       <div className="max-w-2xl space-y-8">
-        <span className="text-xs text-emerald-400 uppercase tracking-widest block">03 / HANDSHAKE</span>
-        <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight">
-          Connect to terminal.
-        </h2>
-        <p className="text-zinc-400 text-xs md:text-sm leading-relaxed">
+        <span className="contact-animate-up text-xs text-emerald-400 uppercase tracking-widest block">03 / HANDSHAKE</span>
+        <div className="contact-animate-up">
+          <h2 ref={titleRef} className="text-3xl md:text-5xl font-bold tracking-tight leading-tight hero-subtitle-wind origin-left">
+            Connect to terminal.
+          </h2>
+        </div>
+        <p className="contact-animate-up text-zinc-400 text-xs md:text-sm leading-relaxed">
           Feel free to reach out if you have a creative project, job opportunity, or just want to chat about WebGL, Three.js, and interactive design.
         </p>
-        <div className="space-y-4 pt-4 text-sm">
+        <div className="contact-animate-up space-y-4 pt-4 text-sm">
           {email && (
             <a
               href={`mailto:${email}`}
-              className="flex items-center gap-3 text-zinc-400 hover:text-emerald-400 transition-colors"
+              className="flex items-center gap-3 text-zinc-400 hover:text-emerald-400 transition-colors w-fit"
             >
               <Mail size={16} /> <span>{email}</span>
             </a>
@@ -71,7 +129,7 @@ export default function Footer({ profileName, email, github, linkedin }: FooterP
       </div>
       
       {/* Footer copyright */}
-      <footer className="border-t border-zinc-900 mt-24 pt-6 text-[10px] text-zinc-700 flex flex-col sm:flex-row items-center justify-between">
+      <footer className="contact-animate-up border-t border-zinc-900 mt-24 pt-6 text-[10px] text-zinc-700 flex flex-col sm:flex-row items-center justify-between">
         <div>© {new Date().getFullYear()} {profileName.toUpperCase()}. ALL SYSTEMS ACTIVE.</div>
         <div className="mt-2 sm:mt-0 uppercase tracking-widest">Built with Next.js, Three.js & GSAP</div>
       </footer>

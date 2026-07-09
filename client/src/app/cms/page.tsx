@@ -22,6 +22,12 @@ interface Profile {
   title: string;
   heroTitle: string;
   heroSubtitle: string;
+  heroDesc: string;
+  aboutTitle: string;
+  aboutFocus: string;
+  aboutLocation: string;
+  techStack: string;
+  aboutImageUrl: string | null;
   bio: string;
   cvUrl: string | null;
   email: string | null;
@@ -29,7 +35,7 @@ interface Profile {
   linkedin: string | null;
 }
 
-import { useGetProfile, useUpdateProfile, useUploadCv } from '../../api/userApi';
+import { useGetProfile, useUpdateProfile, useUploadCv, useUploadAboutImage } from '../../api/userApi';
 import { useGetProjects, useCreateProject, useDeleteProject } from '../../api/projectApi';
 
 export default function CMSPage() {
@@ -42,6 +48,7 @@ export default function CMSPage() {
   const { projects, fetchProjects } = useGetProjects();
   const { updateProfile, isLoading: isUpdatingProfile } = useUpdateProfile();
   const { uploadCv, isLoading: isUploadingCv } = useUploadCv();
+  const { uploadAboutImage, isLoading: isUploadingAboutImage } = useUploadAboutImage();
   const { createProject, uploadProjectImage, isLoading: isCreatingProject } = useCreateProject();
   const { deleteProject } = useDeleteProject();
 
@@ -50,6 +57,12 @@ export default function CMSPage() {
     title: '',
     heroTitle: 'CREATIVE\nDEVELOPER',
     heroSubtitle: 'Full Stack Web Developer',
+    heroDesc: 'SPECIALIZED IN CRAFTING PREMIUM INTERACTIVE WEBSITE SYSTEMS, WEBGL SHADER STRUCTURES, AND FLUID SCROLL GRID ANIMATIONS.',
+    aboutTitle: 'A software engineer building premium visual systems for the web.',
+    aboutFocus: 'Frontend Architectures & Interactive WebGL',
+    aboutLocation: 'Kathmandu, Nepal',
+    techStack: 'Next.js / React 19:OPTIMAL\nWebGL / GLSL:ADVANCED\nGSAP / Motion Engine:ADVANCED\nTailwind CSS v4:OPTIMAL',
+    aboutImageUrl: null,
     bio: '',
     cvUrl: null,
     email: '',
@@ -57,6 +70,7 @@ export default function CMSPage() {
     linkedin: '',
   });
 
+  const [heroStatus, setHeroStatus] = useState('');
   const [profileStatus, setProfileStatus] = useState('');
   
   // Project creation form state
@@ -75,6 +89,10 @@ export default function CMSPage() {
   // CV File Upload State
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvStatus, setCvStatus] = useState('');
+
+  // About Image File Upload State
+  const [aboutImageFile, setAboutImageFile] = useState<File | null>(null);
+  const [aboutImageStatus, setAboutImageStatus] = useState('');
 
   // Sync edit form fields when database profile loads
   useEffect(() => {
@@ -112,6 +130,19 @@ export default function CMSPage() {
     router.push('/');
   };
 
+  const handleUpdateHero = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setHeroStatus('');
+    try {
+      if (!token) return;
+      await updateProfile(editableProfile, token);
+      setHeroStatus('Hero updated successfully!');
+      setTimeout(() => setHeroStatus(''), 3000);
+    } catch (err: any) {
+      setHeroStatus(`Error: ${err.message}`);
+    }
+  };
+
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setProfileStatus('');
@@ -122,6 +153,20 @@ export default function CMSPage() {
       setTimeout(() => setProfileStatus(''), 3000);
     } catch (err: any) {
       setProfileStatus(`Error: ${err.message}`);
+    }
+  };
+
+  const handleUploadAboutImage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!aboutImageFile || !token) return;
+    setAboutImageStatus('');
+    try {
+      await uploadAboutImage(aboutImageFile, token);
+      setAboutImageStatus('About image uploaded successfully!');
+      setAboutImageFile(null);
+      setTimeout(() => setAboutImageStatus(''), 3000);
+    } catch (err: any) {
+      setAboutImageStatus(`Error: ${err.message}`);
     }
   };
 
@@ -223,7 +268,12 @@ export default function CMSPage() {
               <span className="h-2 w-2 rounded-full bg-violet-400 animate-pulse" /> Hero Section
             </h2>
             <p className="text-zinc-600 text-xs font-mono mb-6">Controls the giant title and subtitle on your landing page.</p>
-            <form onSubmit={handleUpdateProfile} className="space-y-4 font-mono text-sm">
+            {heroStatus && (
+              <div className="mb-4 text-xs font-mono bg-zinc-900 p-2 border border-zinc-800 text-violet-300 rounded flex items-center gap-2">
+                <CheckCircle size={14} /> {heroStatus}
+              </div>
+            )}
+            <form onSubmit={handleUpdateHero} className="space-y-4 font-mono text-sm">
               <div>
                 <label className="block text-xs text-zinc-500 mb-1">
                   Hero Title <span className="text-violet-500 ml-1">(one line = one row of text)</span>
@@ -245,6 +295,16 @@ export default function CMSPage() {
                   onChange={(e) => setEditableProfile({ ...editableProfile, heroSubtitle: e.target.value })}
                   className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-violet-500 text-sm"
                   placeholder="Full Stack Web Developer"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-500 mb-1">Hero Description</label>
+                <textarea
+                  value={editableProfile.heroDesc}
+                  onChange={(e) => setEditableProfile({ ...editableProfile, heroDesc: e.target.value })}
+                  rows={2}
+                  className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-violet-500 text-xs"
+                  placeholder="SPECIALIZED IN CRAFTING..."
                 />
               </div>
               {/* Live Preview */}
@@ -308,6 +368,48 @@ export default function CMSPage() {
                 />
               </div>
               <div>
+                <label className="block text-xs text-zinc-500 mb-1">About Section Title</label>
+                <textarea
+                  value={editableProfile.aboutTitle}
+                  onChange={(e) => setEditableProfile({ ...editableProfile, aboutTitle: e.target.value })}
+                  rows={2}
+                  className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-sky-500 text-sm resize-none"
+                  placeholder="A software engineer building..."
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-zinc-500 mb-1">Core Focus</label>
+                  <input
+                    type="text"
+                    value={editableProfile.aboutFocus}
+                    onChange={(e) => setEditableProfile({ ...editableProfile, aboutFocus: e.target.value })}
+                    className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-sky-500 text-sm"
+                    placeholder="Frontend Architectures & Interactive WebGL"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-zinc-500 mb-1">Location</label>
+                  <input
+                    type="text"
+                    value={editableProfile.aboutLocation}
+                    onChange={(e) => setEditableProfile({ ...editableProfile, aboutLocation: e.target.value })}
+                    className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-sky-500 text-sm"
+                    placeholder="Kathmandu, Nepal"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-500 mb-1">Tech Stack Config (Format: Name:Level per line)</label>
+                <textarea
+                  value={editableProfile.techStack}
+                  onChange={(e) => setEditableProfile({ ...editableProfile, techStack: e.target.value })}
+                  rows={4}
+                  className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-sky-500 text-xs resize-none font-mono"
+                  placeholder="Next.js / React 19:OPTIMAL&#10;WebGL / GLSL:ADVANCED"
+                />
+              </div>
+              <div>
                 <label className="block text-xs text-zinc-500 mb-1">Contact Email</label>
                 <input
                   type="email"
@@ -357,7 +459,7 @@ export default function CMSPage() {
               Current CV Location:{' '}
               {profile.cvUrl ? (
                 <a
-                  href={`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}${profile.cvUrl}`}
+                  href={profile.cvUrl.startsWith('http') ? profile.cvUrl : `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}${profile.cvUrl}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-emerald-400 underline hover:text-emerald-300"
@@ -393,6 +495,58 @@ export default function CMSPage() {
                   className="w-full flex items-center justify-center gap-2 bg-emerald-500 text-zinc-950 font-bold py-2.5 rounded hover:bg-emerald-400 transition-colors uppercase tracking-wider text-xs"
                 >
                   {isUploadingCv ? <RefreshCw className="animate-spin" size={14} /> : 'UPLOAD PDF'}
+                </button>
+              )}
+            </form>
+          </section>
+
+          {/* 🌟 About Image CRUD Section */}
+          <section className="border border-zinc-800 bg-zinc-950/40 backdrop-blur p-8 rounded-xl">
+            <h2 className="text-xl font-bold mb-4 text-sky-400 flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-sky-400 animate-pulse" /> About Section Image
+            </h2>
+            <p className="text-zinc-500 text-xs mb-6 font-mono">
+              Upload a custom abstract cover image to represent your biography column.
+            </p>
+            {profile.aboutImageUrl ? (
+              <div className="w-full aspect-video rounded-lg overflow-hidden border border-zinc-900 mb-6 bg-zinc-900 select-none">
+                <img
+                  src={profile.aboutImageUrl.startsWith('http') ? profile.aboutImageUrl : `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}${profile.aboutImageUrl}`}
+                  alt="About cover"
+                  className="w-full h-full object-cover grayscale brightness-75"
+                />
+              </div>
+            ) : (
+              <div className="w-full aspect-video rounded-lg border border-zinc-900 bg-zinc-900/40 mb-6 flex items-center justify-center font-mono text-[10px] text-zinc-600 select-none">
+                USING DEFAULT UNSPLASH ARCHITECTURAL IMAGE
+              </div>
+            )}
+
+            {aboutImageStatus && (
+              <div className="mb-4 text-xs font-mono bg-zinc-900 p-2 border border-zinc-800 text-sky-300 rounded flex items-center gap-2">
+                <CheckCircle size={14} /> {aboutImageStatus}
+              </div>
+            )}
+            <form onSubmit={handleUploadAboutImage} className="space-y-4 font-mono">
+              <div className="border-2 border-dashed border-zinc-800 hover:border-sky-500/50 p-6 rounded-lg text-center cursor-pointer transition-colors relative">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => e.target.files && setAboutImageFile(e.target.files[0])}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <Upload className="mx-auto text-zinc-600 mb-2" size={24} />
+                <span className="text-xs text-zinc-400 block">
+                  {aboutImageFile ? aboutImageFile.name : 'Click to select cover image (.PNG, .JPG)'}
+                </span>
+              </div>
+              {aboutImageFile && (
+                <button
+                  type="submit"
+                  disabled={isUploadingAboutImage}
+                  className="w-full flex items-center justify-center gap-2 bg-sky-500 text-zinc-950 font-bold py-2.5 rounded hover:bg-sky-400 transition-colors uppercase tracking-wider text-xs"
+                >
+                  {isUploadingAboutImage ? <RefreshCw className="animate-spin" size={14} /> : 'UPLOAD COVER IMAGE'}
                 </button>
               )}
             </form>
