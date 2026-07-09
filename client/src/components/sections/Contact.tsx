@@ -98,13 +98,13 @@ export default function Contact({ email, github, linkedin }: ContactProps) {
         ease: 'none',
       });
     }
-  }, { scope: containerRef });
+  }, { scope: containerRef, dependencies: [email, github, linkedin] });
 
   return (
     <section 
       ref={containerRef}
       id="contact" 
-      className="relative z-10 min-h-[60vh] flex flex-col justify-center px-6 md:px-16 lg:px-32 py-24 bg-[#050507]/80 backdrop-blur-[8px] border-t border-zinc-900/30 font-mono"
+      className="relative z-10 min-h-[60vh] flex flex-col justify-center px-6 md:px-16 lg:px-32 py-24 bg-[#050507]/30 backdrop-blur-[2px] border-t border-zinc-900/10 font-mono"
     >
       <div className="contact-content-wrapper max-w-2xl space-y-8">
         <span className="contact-animate-up text-xs text-emerald-400 uppercase tracking-widest block">03 / HANDSHAKE</span>
@@ -116,11 +116,11 @@ export default function Contact({ email, github, linkedin }: ContactProps) {
         <p className="contact-animate-up text-zinc-400 text-xs md:text-sm leading-relaxed">
           Feel free to reach out if you have a creative project, job opportunity, or just want to chat about WebGL, Three.js, and interactive design.
         </p>
-        <div className="contact-animate-up space-y-4 pt-4 text-sm">
+        <div className="space-y-4 pt-4 text-sm">
           {email && (
             <a
               href={`mailto:${email}`}
-              className="flex items-center gap-3 text-zinc-400 hover:text-emerald-400 transition-colors w-fit"
+              className="contact-animate-up flex items-center gap-3 text-zinc-400 hover:text-emerald-400 transition-colors w-fit"
             >
               <Mail size={16} /> <span>{email}</span>
             </a>
@@ -131,7 +131,7 @@ export default function Contact({ email, github, linkedin }: ContactProps) {
                 href={github}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-xs"
+                className="contact-animate-up flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-xs"
               >
                 <GithubIcon /> GitHub
               </a>
@@ -141,7 +141,7 @@ export default function Contact({ email, github, linkedin }: ContactProps) {
                 href={linkedin}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-xs"
+                className="contact-animate-up flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-xs"
               >
                 <LinkedinIcon /> LinkedIn
               </a>
