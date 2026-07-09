@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 import SmoothScrollProvider from "../components/effects/SmoothScrollProvider";
 import QueryProvider from "../components/effects/QueryProvider";
 import SecurityDeterrent from "../components/effects/SecurityDeterrent";
+import Preloader from "../components/effects/Preloader";
 
 export const metadata: Metadata = {
   title: "Rohan | Creative Web Developer & Designer",
@@ -34,6 +35,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[#050507] text-[#e2e8f0]" suppressHydrationWarning>
         <QueryProvider>
+          <Preloader />
           <SmoothScrollProvider>
             <SecurityDeterrent />
             {children}

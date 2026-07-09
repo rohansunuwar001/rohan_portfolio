@@ -10,6 +10,12 @@ export interface Profile {
   bio: string;
   heroTitle: string;
   heroSubtitle: string;
+  heroDesc: string;
+  aboutTitle: string;
+  aboutFocus: string;
+  aboutLocation: string;
+  techStack: string;
+  aboutImageUrl: string | null;
   cvUrl: string | null;
   email: string | null;
   github: string | null;
@@ -22,6 +28,12 @@ const emptyProfile: Profile = {
   bio: '',
   heroTitle: 'CREATIVE\nDEVELOPER',
   heroSubtitle: 'Full Stack Web Developer',
+  heroDesc: 'SPECIALIZED IN CRAFTING PREMIUM INTERACTIVE WEBSITE SYSTEMS, WEBGL SHADER STRUCTURES, AND FLUID SCROLL GRID ANIMATIONS.',
+  aboutTitle: 'A software engineer building premium visual systems for the web.',
+  aboutFocus: 'Frontend Architectures & Interactive WebGL',
+  aboutLocation: 'Kathmandu, Nepal',
+  techStack: 'Next.js / React 19:OPTIMAL\nWebGL / GLSL:ADVANCED\nGSAP / Motion Engine:ADVANCED\nTailwind CSS v4:OPTIMAL',
+  aboutImageUrl: null,
   cvUrl: null,
   email: '',
   github: '',
@@ -130,6 +142,37 @@ export function useUploadCv() {
 
   return {
     uploadCv: (file: File, token: string) => mutation.mutateAsync({ file, token }),
+    isLoading: mutation.isPending,
+    error: mutation.error ? (mutation.error as Error).message : null,
+  };
+}
+
+export function useUploadAboutImage() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: async ({ file, token }: { file: File; token: string }) => {
+      const formData = new FormData();
+      formData.append('aboutImage', file);
+
+      const res = await fetch(`${API_BASE}/profile/upload-image`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to upload about image');
+      return data.aboutImageUrl;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+    },
+  });
+
+  return {
+    uploadAboutImage: (file: File, token: string) => mutation.mutateAsync({ file, token }),
     isLoading: mutation.isPending,
     error: mutation.error ? (mutation.error as Error).message : null,
   };

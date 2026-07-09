@@ -11,5 +11,6 @@ router.get('/', profileController.getProfile);
 // Protected routes (admin only)
 router.put('/', authenticateToken, profileController.updateProfile);
 router.post('/upload-cv', authenticateToken, upload.single('cv'), profileController.uploadCv);
+router.post('/upload-image', authenticateToken, upload.single('aboutImage'), profileController.uploadAboutImage);
 
 export default router;

@@ -102,3 +102,18 @@ html.lenis, html.lenis body {
   -webkit-text-fill-color: transparent;
   animation: wind-gradient 4s linear infinite;
 }
+
+/* Page load locking styles */
+html.is-loading {
+  overflow: hidden;
+  height: 100vh;
+}
+html.is-loading body {
+  overflow: hidden;
+  height: 100vh;
+}
+
+.loader-overlay {
+  will-change: transform;
+}
+

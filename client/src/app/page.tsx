@@ -31,6 +31,12 @@ interface Profile {
   title: string;
   heroTitle: string;
   heroSubtitle: string;
+  heroDesc: string;
+  aboutTitle: string;
+  aboutFocus: string;
+  aboutLocation: string;
+  techStack: string;
+  aboutImageUrl: string | null;
   bio: string;
   cvUrl: string | null;
   email: string | null;
@@ -43,6 +49,12 @@ const DEFAULT_PROFILE: Profile = {
   title: 'Creative Web Developer',
   heroTitle: 'CREATIVE\nDEVELOPER',
   heroSubtitle: 'Full Stack Web Developer',
+  heroDesc: 'SPECIALIZED IN CRAFTING PREMIUM INTERACTIVE WEBSITE SYSTEMS, WEBGL SHADER STRUCTURES, AND FLUID SCROLL GRID ANIMATIONS.',
+  aboutTitle: 'A software engineer building premium visual systems for the web.',
+  aboutFocus: 'Frontend Architectures & Interactive WebGL',
+  aboutLocation: 'Kathmandu, Nepal',
+  techStack: 'Next.js / React 19:OPTIMAL\nWebGL / GLSL:ADVANCED\nGSAP / Motion Engine:ADVANCED\nTailwind CSS v4:OPTIMAL',
+  aboutImageUrl: null,
   bio: 'I build premium, high-impact digital experiences. Merging WebGL art, geometric math, and responsive front-end design to tell stories and engage audiences.',
   cvUrl: null,
   email: 'hello@rohan.com',
@@ -130,8 +142,22 @@ export default function Home() {
         github={profile.github}
         linkedin={profile.linkedin}
       >
-        <Hero title={profile.title} heroTitle={profile.heroTitle || 'CREATIVE\nDEVELOPER'} heroSubtitle={profile.heroSubtitle || 'Full Stack Web Developer'} scrollProgress={scrollProgress} />
-        <About bio={profile.bio} cvUrl={profile.cvUrl} />
+        <Hero 
+          title={profile.title} 
+          heroTitle={profile.heroTitle || 'CREATIVE\nDEVELOPER'} 
+          heroSubtitle={profile.heroSubtitle || 'Full Stack Web Developer'} 
+          heroDesc={profile.heroDesc}
+          scrollProgress={scrollProgress} 
+        />
+        <About 
+          bio={profile.bio} 
+          cvUrl={profile.cvUrl} 
+          aboutTitle={profile.aboutTitle}
+          aboutFocus={profile.aboutFocus}
+          aboutLocation={profile.aboutLocation}
+          techStack={profile.techStack}
+          aboutImageUrl={profile.aboutImageUrl}
+        />
         <Projects projects={projects} />
       </MainLayout>
     </div>

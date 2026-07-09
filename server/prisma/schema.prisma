@@ -37,16 +37,22 @@ model Project {
 }
 
 model Profile {
-  id           Int      @id @default(autoincrement())
-  name         String
-  title        String
-  bio          String
-  heroTitle    String   @default("CREATIVE\nDEVELOPER")
-  heroSubtitle String   @default("Full Stack Web Developer")
-  cvUrl        String?
-  email        String?
-  github       String?
-  linkedin     String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  name          String
+  title         String
+  bio           String
+  heroTitle     String   @default("CREATIVE\nDEVELOPER")
+  heroSubtitle  String   @default("Full Stack Web Developer")
+  heroDesc      String   @default("SPECIALIZED IN CRAFTING PREMIUM INTERACTIVE WEBSITE SYSTEMS, WEBGL SHADER STRUCTURES, AND FLUID SCROLL GRID ANIMATIONS.")
+  aboutTitle    String   @default("A software engineer building premium visual systems for the web.")
+  aboutFocus    String   @default("Frontend Architectures & Interactive WebGL")
+  aboutLocation String   @default("Kathmandu, Nepal")
+  techStack     String   @default("Next.js / React 19:OPTIMAL\nWebGL / GLSL:ADVANCED\nGSAP / Motion Engine:ADVANCED\nTailwind CSS v4:OPTIMAL")
+  aboutImageUrl String?
+  cvUrl         String?
+  email         String?
+  github        String?
+  linkedin      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
