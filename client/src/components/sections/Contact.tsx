@@ -1,10 +1,13 @@
 'use client';
 
 import React, { useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { Mail } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+const TextScramble = dynamic(() => import('../effects/TextScramble'), { ssr: false });
 
 interface ContactProps {
   email: string | null;
@@ -107,10 +110,12 @@ export default function Contact({ email, github, linkedin }: ContactProps) {
       className="relative z-10 min-h-[60vh] flex flex-col justify-center px-6 md:px-16 lg:px-32 py-24 bg-[#050507]/30 backdrop-blur-[2px] border-t border-zinc-900/10 font-mono"
     >
       <div className="contact-content-wrapper max-w-2xl space-y-8">
-        <span className="contact-animate-up text-xs text-emerald-400 uppercase tracking-widest block">03 / HANDSHAKE</span>
+        <span className="contact-animate-up text-xs text-emerald-400 uppercase tracking-widest block cursor-pointer">
+          <TextScramble text="03 / HANDSHAKE" triggerOnScroll={false} />
+        </span>
         <div className="contact-animate-up">
-          <h2 ref={titleRef} className="text-3xl md:text-5xl font-bold tracking-tight leading-tight hero-subtitle-wind origin-left">
-            Connect to terminal.
+          <h2 ref={titleRef} className="text-3xl md:text-5xl font-bold tracking-tight leading-tight hero-subtitle-wind origin-left cursor-pointer">
+            <TextScramble text="Connect to terminal." triggerOnScroll={false} />
           </h2>
         </div>
         <p className="contact-animate-up text-zinc-400 text-xs md:text-sm leading-relaxed">
@@ -122,7 +127,7 @@ export default function Contact({ email, github, linkedin }: ContactProps) {
               href={`mailto:${email}`}
               className="contact-animate-up flex items-center gap-3 text-zinc-400 hover:text-emerald-400 transition-colors w-fit"
             >
-              <Mail size={16} /> <span>{email}</span>
+              <Mail size={16} /> <span><TextScramble text={email} triggerOnScroll={false} /></span>
             </a>
           )}
           <div className="flex items-center gap-6 pt-6">
@@ -133,7 +138,7 @@ export default function Contact({ email, github, linkedin }: ContactProps) {
                 rel="noreferrer"
                 className="contact-animate-up flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-xs"
               >
-                <GithubIcon /> GitHub
+                <GithubIcon /> <TextScramble text="GitHub" triggerOnScroll={false} />
               </a>
             )}
             {linkedin && (
@@ -143,7 +148,7 @@ export default function Contact({ email, github, linkedin }: ContactProps) {
                 rel="noreferrer"
                 className="contact-animate-up flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-xs"
               >
-                <LinkedinIcon /> LinkedIn
+                <LinkedinIcon /> <TextScramble text="LinkedIn" triggerOnScroll={false} />
               </a>
             )}
           </div>

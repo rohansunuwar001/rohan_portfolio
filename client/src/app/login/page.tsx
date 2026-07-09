@@ -14,7 +14,14 @@ export default function LoginPage() {
 
   useEffect(() => {
     // If already logged in, redirect to cms page immediately
-    const token = localStorage.getItem('portfolio_token');
+    let token = localStorage.getItem('portfolio_token');
+    if (!token) {
+      const match = document.cookie.match(/(^|;)\s*portfolio_token\s*=\s*([^;]+)/);
+      if (match) {
+        token = match[2];
+        localStorage.setItem('portfolio_token', token);
+      }
+    }
     if (token) {
       router.push('/cms');
     }
@@ -26,8 +33,9 @@ export default function LoginPage() {
 
     try {
       const token = await login(email, password);
-      // Save token
+      // Save token to localStorage and cookie (30 days persistence)
       localStorage.setItem('portfolio_token', token);
+      document.cookie = `portfolio_token=${token}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax; Secure`;
 
       // Clear input fields
       setEmail('');
