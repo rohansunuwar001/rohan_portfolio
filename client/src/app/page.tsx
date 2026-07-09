@@ -129,6 +129,8 @@ export default function Home() {
     return () => trigger.kill();
   }, []);
 
+
+
   return (
     <div className="relative min-h-screen font-mono text-[#e2e8f0] overflow-hidden select-none">
       {/* 3D WebGL Background Scene */}

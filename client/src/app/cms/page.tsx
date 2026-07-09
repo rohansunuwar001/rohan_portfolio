@@ -248,14 +248,18 @@ export default function CMSPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-linear-to-r from-sky-400 via-rose-500 to-emerald-400">
             PORTFOLIO CENTRAL CMS
           </h1>
-          <p className="text-xs font-mono text-zinc-500 mt-1 uppercase tracking-widest">Active Server: localhost:5000</p>
+          <p className="text-xs font-mono text-zinc-500 mt-1 uppercase tracking-widest">
+            Active Server: {process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}
+          </p>
         </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 border border-zinc-800 bg-zinc-950 px-4 py-2 rounded text-sm hover:bg-zinc-900 hover:text-red-400 transition-all font-mono"
-        >
-          <LogOut size={16} /> LOGOUT
-        </button>
+        <div className="flex items-center gap-3 mt-4 sm:mt-0">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 border border-zinc-800 bg-zinc-950 px-4 py-2 rounded text-sm hover:bg-zinc-900 hover:text-red-400 transition-all font-mono"
+          >
+            <LogOut size={16} /> LOGOUT
+          </button>
+        </div>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
