@@ -136,7 +136,7 @@ export default function About({
           <div className="about-animate-up pt-6">
             {cvUrl && (
               <a
-                href={`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}${cvUrl}`}
+                href={cvUrl.startsWith('http') ? cvUrl : `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}${cvUrl}`}
                 download
                 target="_blank"
                 rel="noreferrer"
