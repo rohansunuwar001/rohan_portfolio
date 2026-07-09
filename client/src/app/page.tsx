@@ -129,37 +129,7 @@ export default function Home() {
     return () => trigger.kill();
   }, []);
 
-  // DevTools protection — reads toggle flag set from CMS page
-  useEffect(() => {
-    const isProtected = localStorage.getItem('devtools_protection') === 'true';
-    if (!isProtected) return;
 
-    // Block keyboard shortcuts: F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (
-        e.key === 'F12' ||
-        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) ||
-        (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) ||
-        (e.ctrlKey && (e.key === 'U' || e.key === 'u'))
-      ) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
-
-    // Block right-click context menu
-    const handleContextMenu = (e: MouseEvent) => {
-      e.preventDefault();
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('contextmenu', handleContextMenu);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('contextmenu', handleContextMenu);
-    };
-  }, []);
 
   return (
     <div className="relative min-h-screen font-mono text-[#e2e8f0] overflow-hidden select-none">
