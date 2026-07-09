@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Upload, Trash2, Plus, LogOut, CheckCircle, RefreshCw, Edit } from 'lucide-react';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Project {
   id: number;
   title: string;
@@ -37,6 +36,7 @@ interface Profile {
 
 import { useGetProfile, useUpdateProfile, useUploadCv, useUploadAboutImage } from '../../api/userApi';
 import { useGetProjects, useCreateProject, useDeleteProject, useUpdateProject } from '../../api/projectApi';
+import Image from 'next/image';
 
 export default function CMSPage() {
   const router = useRouter();
@@ -108,19 +108,6 @@ export default function CMSPage() {
     }
   }, [profile]);
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem('portfolio_token');
-    if (savedToken) {
-      setToken(savedToken);
-      // eslint-disable-next-line react-hooks/immutability
-      fetchCMSData().finally(() => {
-        setIsCheckingAuth(false);
-      });
-    } else {
-      router.push('/login');
-    }
-  }, [router]);
-
   const fetchCMSData = async () => {
     try {
       await fetchProfile();
@@ -129,6 +116,20 @@ export default function CMSPage() {
       console.error('Error fetching CMS data:', err);
     }
   };
+
+  useEffect(() => {
+    const savedToken = localStorage.getItem('portfolio_token');
+    if (savedToken) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setToken(savedToken);
+      fetchCMSData().finally(() => {
+        setIsCheckingAuth(false);
+      });
+    } else {
+      router.push('/login');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router]);
 
   const handleLogout = () => {
     localStorage.removeItem('portfolio_token');
@@ -144,8 +145,9 @@ export default function CMSPage() {
       await updateProfile(editableProfile, token);
       setHeroStatus('Hero updated successfully!');
       setTimeout(() => setHeroStatus(''), 3000);
-    } catch (err: any) {
-      setHeroStatus(`Error: ${err.message}`);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'An unknown error occurred';
+      setHeroStatus(`Error: ${errorMsg}`);
     }
   };
 
@@ -157,8 +159,9 @@ export default function CMSPage() {
       await updateProfile(editableProfile, token);
       setProfileStatus('Profile updated successfully!');
       setTimeout(() => setProfileStatus(''), 3000);
-    } catch (err: any) {
-      setProfileStatus(`Error: ${err.message}`);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'An unknown error occurred';
+      setProfileStatus(`Error: ${errorMsg}`);
     }
   };
 
@@ -171,8 +174,9 @@ export default function CMSPage() {
       setAboutImageStatus('About image uploaded successfully!');
       setAboutImageFile(null);
       setTimeout(() => setAboutImageStatus(''), 3000);
-    } catch (err: any) {
-      setAboutImageStatus(`Error: ${err.message}`);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'An unknown error occurred';
+      setAboutImageStatus(`Error: ${errorMsg}`);
     }
   };
 
@@ -185,8 +189,9 @@ export default function CMSPage() {
       setCvStatus('CV uploaded successfully!');
       setCvFile(null);
       setTimeout(() => setCvStatus(''), 3000);
-    } catch (err: any) {
-      setCvStatus(`Error: ${err.message}`);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'An unknown error occurred';
+      setCvStatus(`Error: ${errorMsg}`);
     }
   };
 
@@ -218,8 +223,9 @@ export default function CMSPage() {
       });
       setProjectImageFile(null);
       setTimeout(() => setProjectStatus(''), 3000);
-    } catch (err: any) {
-      setProjectStatus(`Error: ${err.message}`);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'An unknown error occurred';
+      setProjectStatus(`Error: ${errorMsg}`);
     }
   };
 
@@ -250,8 +256,9 @@ export default function CMSPage() {
       setEditingProject(null);
       setEditProjectImageFile(null);
       setTimeout(() => setEditProjectStatus(''), 3000);
-    } catch (err: any) {
-      setEditProjectStatus(`Error: ${err.message}`);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'An unknown error occurred';
+      setEditProjectStatus(`Error: ${errorMsg}`);
     }
   };
 
@@ -260,8 +267,9 @@ export default function CMSPage() {
     try {
       if (!token) return;
       await deleteProject(id, token);
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'An unknown error occurred';
+      alert(errorMsg);
     }
   };
 
@@ -552,7 +560,7 @@ export default function CMSPage() {
             </p>
             {profile.aboutImageUrl ? (
               <div className="w-full aspect-video rounded-lg overflow-hidden border border-zinc-900 mb-6 bg-zinc-900 select-none">
-                <img
+                <Image
                   src={profile.aboutImageUrl.startsWith('http') ? profile.aboutImageUrl : `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}${profile.aboutImageUrl}`}
                   alt="About cover"
                   className="w-full h-full object-cover grayscale brightness-75"

@@ -96,7 +96,7 @@ export default function Projects({ projects }: ProjectsProps) {
     <section 
       ref={containerRef}
       id="projects" 
-      className="relative min-h-screen px-6 md:px-16 lg:px-32 py-32 bg-[#050507]/80 backdrop-blur-[8px]"
+      className="relative z-10 min-h-screen px-6 md:px-16 lg:px-32 py-32 bg-[#050507]/30 backdrop-blur-[2px]"
     >
       {/* Section Header */}
       <div className="space-y-4 mb-20">

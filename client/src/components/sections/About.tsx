@@ -33,28 +33,55 @@ export default function About({
 
     if (!containerRef.current) return;
 
-    // Get all animate-up elements scoped inside this container
-    const items = gsap.utils.toArray<HTMLElement>(
-      containerRef.current.querySelectorAll('.about-animate-up')
+    // Get left-column animate elements
+    const leftItems = gsap.utils.toArray<HTMLElement>(
+      containerRef.current.querySelectorAll('.about-left-animate')
     );
 
-    // 1. Reveal headers and sections on scroll
-    gsap.fromTo(
-      items,
-      { opacity: 0, y: 35 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.9,
-        stagger: 0.15,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top 78%',
-          toggleActions: 'play none none reverse',
-        },
-      }
+    // Get right-column animate elements
+    const rightItems = gsap.utils.toArray<HTMLElement>(
+      containerRef.current.querySelectorAll('.about-right-animate')
     );
+
+    // 1. Reveal left-column biography details
+    if (leftItems.length > 0) {
+      gsap.fromTo(
+        leftItems,
+        { opacity: 0, y: 35 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          stagger: 0.15,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top 78%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }
+
+    // 2. Reveal right-column visual card & tech stack (independently triggered on mobile stack)
+    if (rightItems.length > 0) {
+      gsap.fromTo(
+        rightItems,
+        { opacity: 0, y: 35 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          stagger: 0.15,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: rightItems[0],
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }
 
     // 2. Parallax effect on the abstract side image
     gsap.to('.about-parallax-img', {
@@ -83,7 +110,7 @@ export default function About({
         ease: 'none',
       });
     }
-  }, { scope: containerRef });
+  }, { scope: containerRef, dependencies: [bio, cvUrl, aboutImageUrl, techStack] });
 
   // Parse tech stack key-value pairs
   const techItems = (techStack || '')
@@ -101,27 +128,27 @@ export default function About({
     <section 
       ref={containerRef}
       id="about" 
-      className="relative min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-32 py-32 bg-[#050507]/80 backdrop-blur-[8px] border-y border-zinc-900 overflow-hidden"
+      className="relative z-10 min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-32 py-32 bg-[#050507]/30 backdrop-blur-[2px] border-y border-zinc-900/30 overflow-hidden"
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         {/* Left Column: Biography & Details */}
         <div className="lg:col-span-7 space-y-8">
-          <div className="about-animate-up text-[10px] md:text-xs text-sky-400 font-mono uppercase tracking-widest flex items-center gap-2">
+          <div className="about-left-animate text-[10px] md:text-xs text-sky-400 font-mono uppercase tracking-widest flex items-center gap-2">
             <span>01 — MEET THE SYSTEM</span>
           </div>
 
-          <div className="about-animate-up">
+          <div className="about-left-animate">
             <h2 ref={titleRef} className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight uppercase font-sans max-w-2xl hero-subtitle-wind origin-left">
               {aboutTitle || "A software engineer building premium visual systems for the web."}
             </h2>
           </div>
 
-          <p className="about-animate-up text-zinc-400 text-sm md:text-base leading-relaxed max-w-xl font-mono">
+          <p className="about-left-animate text-zinc-400 text-sm md:text-base leading-relaxed max-w-xl font-mono">
             {bio}
           </p>
 
           {/* Details list */}
-          <div className="about-animate-up grid grid-cols-2 gap-8 pt-6 max-w-md">
+          <div className="about-left-animate grid grid-cols-2 gap-8 pt-6 max-w-md">
             <div>
               <h4 className="text-zinc-600 text-[10px] uppercase tracking-wider font-mono">Core Focus</h4>
               <p className="text-zinc-300 text-xs mt-1 font-mono">{aboutFocus || "Frontend Architectures & Interactive WebGL"}</p>
@@ -133,7 +160,7 @@ export default function About({
           </div>
 
           {/* Action button */}
-          <div className="about-animate-up pt-6">
+          <div className="about-left-animate pt-6">
             {cvUrl && (
               <a
                 href={cvUrl.startsWith('http') ? cvUrl : `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}${cvUrl}`}
@@ -151,7 +178,7 @@ export default function About({
         {/* Right Column: Parallax Image Card & Skills */}
         <div className="lg:col-span-5 space-y-12">
           {/* Parallax Image container */}
-          <div className="about-animate-up relative h-[300px] md:h-[400px] w-full overflow-hidden rounded-xl border border-zinc-900 bg-zinc-950 group cursor-pointer">
+          <div className="about-right-animate relative h-[300px] md:h-[400px] w-full overflow-hidden rounded-xl border border-zinc-900 bg-zinc-950 group cursor-pointer">
             <div 
               className="about-parallax-img absolute inset-0 -top-[15%] h-[130%] w-full bg-cover bg-center grayscale contrast-125 brightness-75 transition-all duration-500 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100 group-hover:scale-105"
               style={{ 
@@ -167,7 +194,7 @@ export default function About({
           </div>
 
           {/* Tech Stack specs card */}
-          <div className="about-animate-up border border-zinc-900 bg-zinc-950/30 backdrop-blur-sm p-8 rounded-xl font-mono space-y-4">
+          <div className="about-right-animate border border-zinc-900 bg-zinc-950/30 backdrop-blur-sm p-8 rounded-xl font-mono space-y-4">
             <span className="text-zinc-600 text-[10px] block border-b border-zinc-900 pb-2 uppercase tracking-wider">SYSTEM_STACK_CONFIG</span>
             <ul className="space-y-3 text-[11px] text-zinc-400">
               {techItems.map((item, idx) => {
