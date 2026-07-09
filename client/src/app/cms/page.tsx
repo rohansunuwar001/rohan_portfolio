@@ -559,11 +559,13 @@ export default function CMSPage() {
               Upload a custom abstract cover image to represent your biography column.
             </p>
             {profile.aboutImageUrl ? (
-              <div className="w-full aspect-video rounded-lg overflow-hidden border border-zinc-900 mb-6 bg-zinc-900 select-none">
+              <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-zinc-900 mb-6 bg-zinc-900 select-none">
                 <Image
                   src={profile.aboutImageUrl.startsWith('http') ? profile.aboutImageUrl : `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}${profile.aboutImageUrl}`}
                   alt="About cover"
-                  className="w-full h-full object-cover grayscale brightness-75"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover grayscale brightness-75"
                 />
               </div>
             ) : (
