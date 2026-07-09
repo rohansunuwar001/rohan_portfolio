@@ -117,3 +117,43 @@ export function useDeleteProject() {
     error: mutation.error ? (mutation.error as Error).message : null,
   };
 }
+
+// Hook for updating Project
+export function useUpdateProject() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: async ({
+      id,
+      projectData,
+      token,
+    }: {
+      id: number;
+      projectData: Partial<Project>;
+      token: string;
+    }) => {
+      const res = await fetch(`${API_BASE}/projects/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(projectData),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to update project');
+      return data.project;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+    },
+  });
+
+  return {
+    updateProject: (id: number, projectData: Partial<Project>, token: string) =>
+      mutation.mutateAsync({ id, projectData, token }),
+    isLoading: mutation.isPending,
+    error: mutation.error ? (mutation.error as Error).message : null,
+  };
+}
+
