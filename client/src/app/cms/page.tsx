@@ -42,6 +42,7 @@ export default function CMSPage() {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [devToolsProtection, setDevToolsProtection] = useState(false);
 
   // Custom API Hooks
   const { profile, fetchProfile } = useGetProfile();
@@ -114,6 +115,19 @@ export default function CMSPage() {
       router.push('/login');
     }
   }, [router]);
+
+  // Load devtools protection state from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('devtools_protection');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDevToolsProtection(saved === 'true');
+  }, []);
+
+  const handleToggleDevToolsProtection = () => {
+    const next = !devToolsProtection;
+    setDevToolsProtection(next);
+    localStorage.setItem('devtools_protection', String(next));
+  };
 
   const fetchCMSData = async () => {
     try {
@@ -250,12 +264,29 @@ export default function CMSPage() {
           </h1>
           <p className="text-xs font-mono text-zinc-500 mt-1 uppercase tracking-widest">Active Server: localhost:5000</p>
         </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 border border-zinc-800 bg-zinc-950 px-4 py-2 rounded text-sm hover:bg-zinc-900 hover:text-red-400 transition-all font-mono"
-        >
-          <LogOut size={16} /> LOGOUT
-        </button>
+        <div className="flex items-center gap-3 mt-4 sm:mt-0">
+          {/* DevTools Protection Toggle */}
+          <button
+            onClick={handleToggleDevToolsProtection}
+            title={devToolsProtection ? 'Click to disable DevTools protection' : 'Click to enable DevTools protection'}
+            className={`flex items-center gap-2 border px-4 py-2 rounded text-xs font-mono transition-all ${
+              devToolsProtection
+                ? 'border-emerald-600 bg-emerald-950/40 text-emerald-400 hover:bg-emerald-900/40'
+                : 'border-zinc-700 bg-zinc-950 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300'
+            }`}
+          >
+            <span className={`h-2 w-2 rounded-full ${
+              devToolsProtection ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600'
+            }`} />
+            F12 INSPECT: {devToolsProtection ? 'BLOCKED' : 'ALLOWED'}
+          </button>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 border border-zinc-800 bg-zinc-950 px-4 py-2 rounded text-sm hover:bg-zinc-900 hover:text-red-400 transition-all font-mono"
+          >
+            <LogOut size={16} /> LOGOUT
+          </button>
+        </div>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
