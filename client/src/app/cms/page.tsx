@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Upload, Trash2, Plus, LogOut, CheckCircle, RefreshCw } from 'lucide-react';
+import { Upload, Trash2, Plus, LogOut, CheckCircle, RefreshCw, Edit } from 'lucide-react';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Project {
@@ -36,7 +36,7 @@ interface Profile {
 }
 
 import { useGetProfile, useUpdateProfile, useUploadCv, useUploadAboutImage } from '../../api/userApi';
-import { useGetProjects, useCreateProject, useDeleteProject } from '../../api/projectApi';
+import { useGetProjects, useCreateProject, useDeleteProject, useUpdateProject } from '../../api/projectApi';
 
 export default function CMSPage() {
   const router = useRouter();
@@ -51,6 +51,7 @@ export default function CMSPage() {
   const { uploadAboutImage, isLoading: isUploadingAboutImage } = useUploadAboutImage();
   const { createProject, uploadProjectImage, isLoading: isCreatingProject } = useCreateProject();
   const { deleteProject } = useDeleteProject();
+  const { updateProject, isLoading: isUpdatingProject } = useUpdateProject();
 
   const [editableProfile, setEditableProfile] = useState<Profile>({
     name: '',
@@ -85,6 +86,11 @@ export default function CMSPage() {
   });
   const [projectImageFile, setProjectImageFile] = useState<File | null>(null);
   const [projectStatus, setProjectStatus] = useState('');
+
+  // Project editing form state
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [editProjectImageFile, setEditProjectImageFile] = useState<File | null>(null);
+  const [editProjectStatus, setEditProjectStatus] = useState('');
 
   // CV File Upload State
   const [cvFile, setCvFile] = useState<File | null>(null);
@@ -214,6 +220,38 @@ export default function CMSPage() {
       setTimeout(() => setProjectStatus(''), 3000);
     } catch (err: any) {
       setProjectStatus(`Error: ${err.message}`);
+    }
+  };
+
+  const handleUpdateProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProject) return;
+    setEditProjectStatus('');
+    try {
+      if (!token) return;
+      let imageUrl = editingProject.imageUrl;
+
+      if (editProjectImageFile) {
+        imageUrl = await uploadProjectImage(editProjectImageFile, token);
+      }
+
+      await updateProject(editingProject.id, {
+        title: editingProject.title,
+        description: editingProject.description,
+        demoLink: editingProject.demoLink,
+        githubLink: editingProject.githubLink,
+        tags: editingProject.tags,
+        featured: editingProject.featured,
+        order: editingProject.order,
+        imageUrl,
+      }, token);
+
+      setEditProjectStatus('Project updated successfully!');
+      setEditingProject(null);
+      setEditProjectImageFile(null);
+      setTimeout(() => setEditProjectStatus(''), 3000);
+    } catch (err: any) {
+      setEditProjectStatus(`Error: ${err.message}`);
     }
   };
 
@@ -559,116 +597,238 @@ export default function CMSPage() {
 
         {/* Right Column: Projects (7 Columns) */}
         <div className="lg:col-span-7 space-y-12">
-          {/* Add New Project Card */}
-          <section className="border border-zinc-800 bg-zinc-950/40 backdrop-blur p-8 rounded-xl">
-            <h2 className="text-xl font-bold mb-6 text-rose-500 flex items-center gap-2">
-              <Plus size={20} /> Add Portfolio Project
-            </h2>
-            {projectStatus && (
-              <div className="mb-4 text-xs font-mono bg-zinc-900 p-2 border border-zinc-800 text-rose-300 rounded flex items-center gap-2">
-                <CheckCircle size={14} /> {projectStatus}
-              </div>
-            )}
-            <form onSubmit={handleCreateProject} className="space-y-4 font-mono text-sm">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-2">
-                  <label className="block text-xs text-zinc-500 mb-1">Project Title</label>
+          {editingProject ? (
+            /* Edit Existing Project Form */
+            <section id="projects-form-container" className="border border-zinc-800 bg-zinc-950/40 backdrop-blur p-8 rounded-xl">
+              <h2 className="text-xl font-bold mb-6 text-amber-500 flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <Edit size={20} /> Edit Portfolio Project
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setEditingProject(null)}
+                  className="text-xs border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:text-zinc-300 px-3 py-1.5 rounded transition-all"
+                >
+                  CANCEL EDIT
+                </button>
+              </h2>
+              {editProjectStatus && (
+                <div className="mb-4 text-xs font-mono bg-zinc-900 p-2 border border-zinc-800 text-amber-300 rounded flex items-center gap-2">
+                  <CheckCircle size={14} /> {editProjectStatus}
+                </div>
+              )}
+              <form onSubmit={handleUpdateProject} className="space-y-4 font-mono text-sm">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="col-span-2">
+                    <label className="block text-xs text-zinc-500 mb-1">Project Title</label>
+                    <input
+                      type="text"
+                      value={editingProject.title}
+                      onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
+                      required
+                      className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-amber-500 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-zinc-500 mb-1">Order Index</label>
+                    <input
+                      type="number"
+                      value={editingProject.order}
+                      onChange={(e) => setEditingProject({ ...editingProject, order: parseInt(e.target.value, 10) || 0 })}
+                      className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-amber-500 text-sm"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-zinc-500 mb-1">Short Description</label>
                   <input
                     type="text"
-                    value={newProject.title}
-                    onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
+                    value={editingProject.description}
+                    onChange={(e) => setEditingProject({ ...editingProject, description: e.target.value })}
+                    required
+                    className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-amber-500 text-sm"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-zinc-500 mb-1">Live Demo URL</label>
+                    <input
+                      type="url"
+                      value={editingProject.demoLink || ''}
+                      onChange={(e) => setEditingProject({ ...editingProject, demoLink: e.target.value || null })}
+                      className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-amber-500 text-xs"
+                      placeholder="https://"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-zinc-500 mb-1">Source Code URL (GitHub)</label>
+                    <input
+                      type="url"
+                      value={editingProject.githubLink || ''}
+                      onChange={(e) => setEditingProject({ ...editingProject, githubLink: e.target.value || null })}
+                      className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-amber-500 text-xs"
+                      placeholder="https://"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-zinc-500 mb-1">Tags (Comma-separated)</label>
+                  <input
+                    type="text"
+                    value={editingProject.tags}
+                    onChange={(e) => setEditingProject({ ...editingProject, tags: e.target.value })}
+                    required
+                    className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-amber-500 text-xs"
+                    placeholder="React, Three.js, GSAP"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-zinc-500 mb-1">Project Screenshot</label>
+                  <div className="border border-zinc-800 bg-zinc-900/40 hover:border-amber-500/50 p-4 rounded text-center cursor-pointer transition-colors relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => e.target.files && setEditProjectImageFile(e.target.files[0])}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <span className="text-xs text-zinc-400 block">
+                      {editProjectImageFile ? editProjectImageFile.name : (editingProject.imageUrl ? 'Keep Current Screenshot or Select New' : 'Select JPG/PNG Screenshot')}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <input
+                    type="checkbox"
+                    id="edit-featured"
+                    checked={editingProject.featured}
+                    onChange={(e) => setEditingProject({ ...editingProject, featured: e.target.checked })}
+                    className="h-4 w-4 bg-zinc-900 border-zinc-800 rounded accent-amber-500"
+                  />
+                  <label htmlFor="edit-featured" className="text-xs text-zinc-400 select-none cursor-pointer">
+                    Feature this project prominently on landing page
+                  </label>
+                </div>
+                <button
+                  type="submit"
+                  disabled={isUpdatingProject}
+                  className="w-full flex items-center justify-center gap-2 bg-amber-500 text-zinc-950 font-bold py-2.5 rounded hover:bg-amber-400 transition-colors mt-4 uppercase tracking-wider text-xs"
+                >
+                  {isUpdatingProject ? <RefreshCw className="animate-spin" size={14} /> : 'UPDATE PROJECT DETAILS'}
+                </button>
+              </form>
+            </section>
+          ) : (
+            /* Add New Project Card */
+            <section id="projects-form-container" className="border border-zinc-800 bg-zinc-950/40 backdrop-blur p-8 rounded-xl">
+              <h2 className="text-xl font-bold mb-6 text-rose-500 flex items-center gap-2">
+                <Plus size={20} /> Add Portfolio Project
+              </h2>
+              {projectStatus && (
+                <div className="mb-4 text-xs font-mono bg-zinc-900 p-2 border border-zinc-800 text-rose-300 rounded flex items-center gap-2">
+                  <CheckCircle size={14} /> {projectStatus}
+                </div>
+              )}
+              <form onSubmit={handleCreateProject} className="space-y-4 font-mono text-sm">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="col-span-2">
+                    <label className="block text-xs text-zinc-500 mb-1">Project Title</label>
+                    <input
+                      type="text"
+                      value={newProject.title}
+                      onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
+                      required
+                      className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-rose-500 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-zinc-500 mb-1">Order Index</label>
+                    <input
+                      type="number"
+                      value={newProject.order}
+                      onChange={(e) => setNewProject({ ...newProject, order: parseInt(e.target.value, 10) })}
+                      className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-rose-500 text-sm"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-zinc-500 mb-1">Short Description</label>
+                  <input
+                    type="text"
+                    value={newProject.description}
+                    onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
                     required
                     className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-rose-500 text-sm"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs text-zinc-500 mb-1">Order Index</label>
-                  <input
-                    type="number"
-                    value={newProject.order}
-                    onChange={(e) => setNewProject({ ...newProject, order: parseInt(e.target.value, 10) })}
-                    className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-rose-500 text-sm"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-zinc-500 mb-1">Live Demo URL</label>
+                    <input
+                      type="url"
+                      value={newProject.demoLink}
+                      onChange={(e) => setNewProject({ ...newProject, demoLink: e.target.value })}
+                      className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-rose-500 text-xs"
+                      placeholder="https://"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-zinc-500 mb-1">Source Code URL (GitHub)</label>
+                    <input
+                      type="url"
+                      value={newProject.githubLink}
+                      onChange={(e) => setNewProject({ ...newProject, githubLink: e.target.value })}
+                      className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-rose-500 text-xs"
+                      placeholder="https://"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div>
-                <label className="block text-xs text-zinc-500 mb-1">Short Description</label>
-                <input
-                  type="text"
-                  value={newProject.description}
-                  onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                  required
-                  className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-rose-500 text-sm"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-zinc-500 mb-1">Live Demo URL</label>
+                  <label className="block text-xs text-zinc-500 mb-1">Tags (Comma-separated)</label>
                   <input
-                    type="url"
-                    value={newProject.demoLink}
-                    onChange={(e) => setNewProject({ ...newProject, demoLink: e.target.value })}
+                    type="text"
+                    value={newProject.tags}
+                    onChange={(e) => setNewProject({ ...newProject, tags: e.target.value })}
+                    required
                     className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-rose-500 text-xs"
-                    placeholder="https://"
+                    placeholder="React, Three.js, GSAP"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-zinc-500 mb-1">Source Code URL (GitHub)</label>
-                  <input
-                    type="url"
-                    value={newProject.githubLink}
-                    onChange={(e) => setNewProject({ ...newProject, githubLink: e.target.value })}
-                    className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-rose-500 text-xs"
-                    placeholder="https://"
-                  />
+                  <label className="block text-xs text-zinc-500 mb-1">Project Screenshot</label>
+                  <div className="border border-zinc-800 bg-zinc-900/40 hover:border-rose-500/50 p-4 rounded text-center cursor-pointer transition-colors relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => e.target.files && setProjectImageFile(e.target.files[0])}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <span className="text-xs text-zinc-400 block">
+                      {projectImageFile ? projectImageFile.name : 'Select JPG/PNG Screenshot'}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <label className="block text-xs text-zinc-500 mb-1">Tags (Comma-separated)</label>
-                <input
-                  type="text"
-                  value={newProject.tags}
-                  onChange={(e) => setNewProject({ ...newProject, tags: e.target.value })}
-                  required
-                  className="w-full border border-zinc-800 bg-zinc-900/60 p-2.5 rounded focus:outline-none focus:border-rose-500 text-xs"
-                  placeholder="React, Three.js, GSAP"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-zinc-500 mb-1">Project Screenshot</label>
-                <div className="border border-zinc-800 bg-zinc-900/40 hover:border-rose-500/50 p-4 rounded text-center cursor-pointer transition-colors relative">
+                <div className="flex items-center gap-2 mt-2">
                   <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => e.target.files && setProjectImageFile(e.target.files[0])}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    type="checkbox"
+                    id="featured"
+                    checked={newProject.featured}
+                    onChange={(e) => setNewProject({ ...newProject, featured: e.target.checked })}
+                    className="h-4 w-4 bg-zinc-900 border-zinc-800 rounded accent-rose-500"
                   />
-                  <span className="text-xs text-zinc-400 block">
-                    {projectImageFile ? projectImageFile.name : 'Select JPG/PNG Screenshot'}
-                  </span>
+                  <label htmlFor="featured" className="text-xs text-zinc-400 select-none cursor-pointer">
+                    Feature this project prominently on landing page
+                  </label>
                 </div>
-              </div>
-              <div className="flex items-center gap-2 mt-2">
-                <input
-                  type="checkbox"
-                  id="featured"
-                  checked={newProject.featured}
-                  onChange={(e) => setNewProject({ ...newProject, featured: e.target.checked })}
-                  className="h-4 w-4 bg-zinc-900 border-zinc-800 rounded accent-rose-500"
-                />
-                <label htmlFor="featured" className="text-xs text-zinc-400 select-none cursor-pointer">
-                  Feature this project prominently on landing page
-                </label>
-              </div>
-              <button
-                type="submit"
-                disabled={isCreatingProject}
-                className="w-full flex items-center justify-center gap-2 bg-rose-500 text-zinc-950 font-bold py-2.5 rounded hover:bg-rose-400 transition-colors mt-4 uppercase tracking-wider text-xs"
-              >
-                {isCreatingProject ? <RefreshCw className="animate-spin" size={14} /> : 'ADD PROJECT LINK'}
-              </button>
-            </form>
-          </section>
+                <button
+                  type="submit"
+                  disabled={isCreatingProject}
+                  className="w-full flex items-center justify-center gap-2 bg-rose-500 text-zinc-950 font-bold py-2.5 rounded hover:bg-rose-400 transition-colors mt-4 uppercase tracking-wider text-xs"
+                >
+                  {isCreatingProject ? <RefreshCw className="animate-spin" size={14} /> : 'ADD PROJECT LINK'}
+                </button>
+              </form>
+            </section>
+          )}
 
           {/* Active Projects List */}
           <section className="border border-zinc-800 bg-zinc-950/40 backdrop-blur p-8 rounded-xl">
@@ -694,13 +854,31 @@ export default function CMSPage() {
                         ))}
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleDeleteProject(proj.id)}
-                      className="text-zinc-600 hover:text-red-500 p-2 hover:bg-zinc-800/40 rounded transition-all"
-                      title="Delete Project"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setEditingProject(proj);
+                          // Scroll smoothly to projects section edit area
+                          const projSection = document.getElementById('projects-form-container');
+                          if (projSection) {
+                            projSection.scrollIntoView({ behavior: 'smooth' });
+                          } else {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }
+                        }}
+                        className="text-zinc-600 hover:text-amber-500 p-2 hover:bg-zinc-800/40 rounded transition-all"
+                        title="Edit Project"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteProject(proj.id)}
+                        className="text-zinc-600 hover:text-red-500 p-2 hover:bg-zinc-800/40 rounded transition-all"
+                        title="Delete Project"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
                 ))
               )}
