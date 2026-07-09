@@ -120,7 +120,7 @@ export default function CMSPage() {
       await updateProfile(editableProfile, token);
       setProfileStatus('Profile updated successfully!');
       setTimeout(() => setProfileStatus(''), 3000);
-    } catch (err: unknown) {
+    } catch (err: any) {
       setProfileStatus(`Error: ${err.message}`);
     }
   };
