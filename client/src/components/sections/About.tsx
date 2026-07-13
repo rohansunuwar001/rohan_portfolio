@@ -98,7 +98,8 @@ export default function About({
       },
     });
 
-    // 3. Scroll scrub: Scale down & fade out title on scroll down past viewport top
+    // 3. Scroll scrub: Scale down & fade out title on scroll down past viewport top (Blocked/Commented out)
+    /*
     if (titleRef.current) {
       gsap.to(titleRef.current, {
         scrollTrigger: {
@@ -113,6 +114,7 @@ export default function About({
         ease: 'none',
       });
     }
+    */
   }, { scope: containerRef, dependencies: [bio, cvUrl, aboutImageUrl, techStack] });
 
   // Parse tech stack key-value pairs

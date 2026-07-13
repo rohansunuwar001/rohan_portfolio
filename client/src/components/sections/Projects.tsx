@@ -79,7 +79,8 @@ export default function Projects({ projects }: ProjectsProps) {
       }
     );
 
-    // Scroll scrub: Scale down & fade out title on scroll down past viewport top
+    // Scroll scrub: Scale down & fade out title on scroll down past viewport top (Blocked/Commented out)
+    /*
     if (titleRef.current) {
       gsap.to(titleRef.current, {
         scrollTrigger: {
@@ -94,6 +95,7 @@ export default function Projects({ projects }: ProjectsProps) {
         ease: 'none',
       });
     }
+    */
   }, { scope: containerRef });
 
   return (

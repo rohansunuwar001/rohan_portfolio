@@ -79,7 +79,8 @@ export default function Hero({ title, heroTitle, heroSubtitle, heroDesc, scrollP
     // Listen for preloader completion
     window.addEventListener('preloaderComplete', startAnimations);
 
-    // Scroll animation: Scale down/move the giant header text as we scroll
+    // Scroll animation: Scale down/move the giant header text as we scroll (Blocked/Commented out)
+    /*
     if (titleRef.current) {
       gsap.to(titleRef.current, {
         scrollTrigger: {
@@ -94,6 +95,7 @@ export default function Hero({ title, heroTitle, heroSubtitle, heroDesc, scrollP
         ease: 'none',
       });
     }
+    */
 
     return () => {
       window.removeEventListener('preloaderComplete', startAnimations);
