@@ -6,6 +6,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 const TextScramble = dynamic(() => import('../effects/TextScramble'), { ssr: false });
 

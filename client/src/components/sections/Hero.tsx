@@ -121,7 +121,7 @@ export default function Hero({ title, heroTitle, heroSubtitle, heroDesc, scrollP
         >
           {heroLines.map((line, i) => (
             <div key={i} className="overflow-hidden cursor-pointer">
-              <span className="hero-title-line inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-400 to-zinc-600">
+              <span className="hero-title-line inline-block text-transparent bg-clip-text bg-linear-to-r from-white via-zinc-400 to-zinc-600">
                 <TextScramble text={line} triggerOnScroll={false} />
               </span>
             </div>
@@ -160,7 +160,7 @@ export default function Hero({ title, heroTitle, heroSubtitle, heroDesc, scrollP
       {/* Floating transparent code block */}
       <div className="code-float absolute right-8 md:right-16 lg:right-28 top-1/2 -translate-y-1/2 hidden md:block select-none">
         <div className="relative font-mono text-base md:text-lg lg:text-xl leading-loose">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-sky-500/[0.03] to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-b from-transparent via-sky-500/3 to-transparent pointer-events-none" />
           
           <div className="code-line overflow-hidden py-1">
             <span className="text-pink-500 cursor-pointer"><TextScramble text="while" triggerOnScroll={false} /></span> <span className="text-zinc-400">(</span><span className="text-emerald-400 font-semibold cursor-pointer"><TextScramble text="alive" triggerOnScroll={false} /></span><span className="text-zinc-400">)</span>
