@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Gradient matching the site's theme (white -> sky-blue -> rose-pink) -->
+    <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#f43f5e" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Sleek dark background circle with subtle border to look premium -->
+  <circle cx="256" cy="256" r="240" fill="#050507" stroke="url(#logo-grad)" stroke-width="8" />
+  
+  <!-- Stylized Geometric "R" -->
+  <path d="M180 130 V382 M180 130 H280 C340 130, 370 160, 370 220 C370 280, 340 310, 280 310 H180 M260 310 L340 382" 
+        fill="none" 
+        stroke="url(#logo-grad)" 
+        stroke-width="36" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+        
+  <!-- Branding Dot matching the dot in "ROHAN." -->
+  <circle cx="385" cy="382" r="18" fill="url(#logo-grad)" />
+</svg>

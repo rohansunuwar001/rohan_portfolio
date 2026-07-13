@@ -47,7 +47,7 @@ interface Profile {
 }
 
 const DEFAULT_PROFILE: Profile = {
-  name: 'ROHAN',
+  name: 'ROHAN.',
   title: 'Creative Web Developer',
   heroTitle: 'CREATIVE\nDEVELOPER',
   heroSubtitle: 'Full Stack Web Developer',
